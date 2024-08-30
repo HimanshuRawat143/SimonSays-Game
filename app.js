@@ -75,7 +75,7 @@ for(btn of allBtns){
 }
 
 function reset(){
-    started==false;
+    started=false;
     gameSeq=  [];
     userSeq = [];
     level = 0;
