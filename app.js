@@ -21,6 +21,7 @@ document.addEventListener(startEvent, function(event) {
     if (!started) {
         // On mobile, start the game if any part of the screen is touched
         if (isMobile) {
+            h3.innerText = "Touch to start the game !!";
             console.log("Game started on touch!");
             started = true;
             levelup();
