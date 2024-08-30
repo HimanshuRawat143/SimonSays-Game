@@ -6,7 +6,7 @@ let green = document.querySelector(".green");
 let yellow = document.querySelector(".yellow");
 let level = 0;
 let started = false;
-let btnarray = ["purple","green","yellow","pink"];
+let btnarray = ["purple", "green", "yellow", "pink"];
 let gameSeq = [];
 let userSeq = [];
 
@@ -17,33 +17,37 @@ let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 let startEvent = isMobile ? "touchstart" : "keypress";
 
 // Add event listener to start the game
-document.addEventListener(startEvent, function(event){
-    if(!started){
-        // On mobile, ensure the touch is on a blank area (not a button)
-        if (isMobile && event.target.tagName.toLowerCase() !== 'body') return;
-
-        console.log("Game started !!!");
-        started = true;
-
-        levelup();
+document.addEventListener(startEvent, function(event) {
+    if (!started) {
+        // On mobile, start the game if any part of the screen is touched
+        if (isMobile) {
+            console.log("Game started on touch!");
+            started = true;
+            levelup();
+        } else if (!isMobile && event.key === "Enter") {
+            // On desktop, start the game when "Enter" key is pressed
+            console.log("Game started on keypress!");
+            started = true;
+            levelup();
+        }
     }
 });
 
-function btnflash(btn){
+function btnflash(btn) {
     btn.classList.add("flash");
-    setTimeout(function(){
+    setTimeout(function() {
         btn.classList.remove("flash");
-    },100);
+    }, 100);
 }
 
-function userFlash(btn){
+function userFlash(btn) {
     btn.classList.add("Userflash");
-    setTimeout(function(){
+    setTimeout(function() {
         btn.classList.remove("Userflash");
-    },100);
+    }, 100);
 }
 
-function levelup(){
+function levelup() {
     userSeq = [];
     level++;
     h3.innerText = `Level ${level}`;
@@ -54,39 +58,38 @@ function levelup(){
     btnflash(randbtn);
 }
 
-function checkAns(idx){
-    if(userSeq[idx] === gameSeq[idx]){
-        if(userSeq.length === gameSeq.length){
+function checkAns(idx) {
+    if (userSeq[idx] === gameSeq[idx]) {
+        if (userSeq.length === gameSeq.length) {
             setTimeout(levelup, 1000);
         }
-    }
-    else{
-        h3.innerHTML = `Game Over ! Your score was <b> ${level}</b><br> Press any key or touch to start again!!`;
+    } else {
+        h3.innerHTML = `Game Over! Your score was <b>${level}</b><br>Press any key or touch to start again!!`;
         document.querySelector("body").style.backgroundColor = "red";
-        setTimeout(function(){
-            document.querySelector("body").style.backgroundColor = "white";  
+        setTimeout(function() {
+            document.querySelector("body").style.backgroundColor = "white";
         }, 150);
         reset();
     }
 }
 
-function btnPress(){
+function btnPress() {
     let btn = this;
     userFlash(btn);
 
-    let userColor = btn.getAttribute("id");
+    let userColor = btn.getAttribute("class").split(' ')[0];
     userSeq.push(userColor);
 
     checkAns(userSeq.length - 1);
 }
 
 let allBtns = document.querySelectorAll(".btn");
-for(let btn of allBtns){
+for (let btn of allBtns) {
     btn.addEventListener("click", btnPress);
 }
 
-function reset(){
-    started = false;  // Corrected the assignment
+function reset() {
+    started = false;
     gameSeq = [];
     userSeq = [];
     level = 0;
