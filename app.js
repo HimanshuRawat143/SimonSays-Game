@@ -9,8 +9,19 @@ let started = false;
 let btnarray = ["purple","green","yellow","pink"];
 let gameSeq = [];
 let userSeq = [];
-document.addEventListener("keypress", function(){
-    if(started==false){
+
+// Detect if the user is on a mobile device
+let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+// Set the event type based on the device
+let startEvent = isMobile ? "touchstart" : "keypress";
+
+// Add event listener to start the game
+document.addEventListener(startEvent, function(event){
+    if(!started){
+        // On mobile, ensure the touch is on a blank area (not a button)
+        if (isMobile && event.target.tagName.toLowerCase() !== 'body') return;
+
         console.log("Game started !!!");
         started = true;
 
@@ -36,7 +47,7 @@ function levelup(){
     userSeq = [];
     level++;
     h3.innerText = `Level ${level}`;
-    let rand = Math.floor(Math.random()*3);
+    let rand = Math.floor(Math.random() * 4);  // Fixed the random range to include all colors
     let randcolor = btnarray[rand];
     let randbtn = document.querySelector(`.${randcolor}`);
     gameSeq.push(randcolor);
@@ -44,17 +55,17 @@ function levelup(){
 }
 
 function checkAns(idx){
-    if(userSeq[idx]=== gameSeq[idx]){
-        if(userSeq.length===gameSeq.length){
-            setTimeout(levelup,1000);
+    if(userSeq[idx] === gameSeq[idx]){
+        if(userSeq.length === gameSeq.length){
+            setTimeout(levelup, 1000);
         }
     }
     else{
-        h3.innerHTML  = `Game Over ! Your score was <b> ${level}</b><br> Press any key to start !!`;
+        h3.innerHTML = `Game Over ! Your score was <b> ${level}</b><br> Press any key or touch to start again!!`;
         document.querySelector("body").style.backgroundColor = "red";
         setTimeout(function(){
             document.querySelector("body").style.backgroundColor = "white";  
-        },150);
+        }, 150);
         reset();
     }
 }
@@ -63,21 +74,20 @@ function btnPress(){
     let btn = this;
     userFlash(btn);
 
-    userColor = btn.getAttribute("id");
+    let userColor = btn.getAttribute("id");
     userSeq.push(userColor);
 
-    checkAns(userSeq.length-1);
+    checkAns(userSeq.length - 1);
 }
 
 let allBtns = document.querySelectorAll(".btn");
-for(btn of allBtns){
-    btn.addEventListener("click",btnPress);
+for(let btn of allBtns){
+    btn.addEventListener("click", btnPress);
 }
 
 function reset(){
-    started=false;
-    gameSeq=  [];
+    started = false;  // Corrected the assignment
+    gameSeq = [];
     userSeq = [];
     level = 0;
 }
-
